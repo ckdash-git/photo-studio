@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Photo Studio Booking Platform
 
-## Getting Started
+Web platform for booking photo shoot sessions — slot selection, payment,
+coupons, referrals, and confirmation emails. Built to also render inside a
+Flutter WebView for app store distribution.
 
-First, run the development server:
+Repo name is a placeholder; a final product name is still to be decided.
+
+## Stack
+
+- **Framework**: Next.js 15 (App Router, TypeScript, Tailwind v4)
+- **DB / Auth / Storage**: [Supabase](https://supabase.com) (free tier)
+- **Payments**: [Cashfree](https://cashfree.com) — UPI is 0% fee, cards ~1.9%
+- **Transactional email**: [Resend](https://resend.com)
+- **Design system**: `DESIGN.md` at the repo root (MiniMax reference,
+  via [getdesign.md](https://getdesign.md)) — point your AI coding
+  agent at it before writing any UI.
+
+## Setup
+
+```bash
+npm install
+cp .env.example .env.local   # fill in Supabase / Resend / Cashfree keys
+```
+
+Apply the DB schema in `supabase/migrations/0001_init.sql` via the Supabase
+SQL editor or `supabase db push`.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+  app/            Next.js routes (App Router)
+  lib/supabase/    Supabase client helpers (browser + server)
+supabase/
+  migrations/      SQL schema
+DESIGN.md          UI design tokens/reference for coding agents
+.env.example        Required environment variables
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Status
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [x] Project scaffold + design tokens wired in
+- [x] DB schema: services, slots, bookings, payments, coupons, referrals
+- [ ] Booking flow UI (browse services → pick slot → checkout)
+- [ ] Cashfree payment integration + webhook handler
+- [ ] Booking confirmation email (Resend)
+- [ ] Coupon redemption logic
+- [ ] Referral code generation + tracking
+- [ ] SEO: sitemap, robots.txt, LocalBusiness schema
+- [ ] Meta Pixel + GA4
