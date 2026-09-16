@@ -1,26 +1,76 @@
 @import "tailwindcss";
 
+/*
+  Design tokens sourced from DESIGN.md (MiniMax reference).
+  Keep this file in sync if DESIGN.md is regenerated/customized.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-primary: #0a0a0a;
+  --color-on-primary: #ffffff;
+  --color-primary-soft: #181e25;
+
+  --color-brand-coral: #ff5530;
+  --color-brand-magenta: #ea5ec1;
+  --color-brand-blue: #1456f0;
+  --color-brand-blue-mid: #3b82f6;
+  --color-brand-purple: #a855f7;
+  --color-brand-cyan: #3daeff;
+
+  --color-canvas: #ffffff;
+  --color-surface: #f7f8fa;
+  --color-surface-soft: #f2f3f5;
+  --color-hairline: #e5e7eb;
+
+  --color-ink: #0a0a0a;
+  --color-ink-strong: #000000;
+  --color-charcoal: #222222;
+  --color-slate: #45515e;
+  --color-steel: #5f5f5f;
+  --color-stone: #8e8e93;
+  --color-muted: #a8aab2;
+
+  --color-success-bg: #e8ffea;
+  --color-success-text: #1ba673;
+
+  --background: var(--color-canvas);
+  --foreground: var(--color-ink);
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: var(--color-primary);
+  --color-on-primary: var(--color-on-primary);
+  --color-brand-coral: var(--color-brand-coral);
+  --color-brand-magenta: var(--color-brand-magenta);
+  --color-brand-blue: var(--color-brand-blue);
+  --color-brand-purple: var(--color-brand-purple);
+  --color-brand-cyan: var(--color-brand-cyan);
+  --color-surface: var(--color-surface);
+  --color-surface-soft: var(--color-surface-soft);
+  --color-hairline: var(--color-hairline);
+  --color-slate: var(--color-slate);
+  --color-stone: var(--color-stone);
+  --color-muted: var(--color-muted);
+  --color-success-bg: var(--color-success-bg);
+  --color-success-text: var(--color-success-text);
+
+  --font-sans: var(--font-dm-sans);
+  --font-mono: var(--font-dm-mono);
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
