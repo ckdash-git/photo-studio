@@ -42,14 +42,28 @@ DESIGN.md          UI design tokens/reference for coding agents
 .env.example        Required environment variables
 ```
 
+## Payments
+
+Currently uses a **mock payment provider** (`src/lib/payments/mock.ts`) that
+auto-confirms every booking — no real money moves, no Cashfree account
+needed yet. This lets the full booking → confirmation → email flow be built
+and tested end to end first.
+
+To switch to Cashfree later: implement `PaymentProvider` from
+`src/lib/payments/provider.ts` in a new `cashfree.ts`, add a webhook route
+under `app/api/webhooks/cashfree`, and flip the provider in
+`src/lib/payments/index.ts`. Nothing else in the booking flow changes.
+
 ## Status
 
 - [x] Project scaffold + design tokens wired in
 - [x] DB schema: services, slots, bookings, payments, coupons, referrals
-- [ ] Booking flow UI (browse services → pick slot → checkout)
-- [ ] Cashfree payment integration + webhook handler
-- [ ] Booking confirmation email (Resend)
-- [ ] Coupon redemption logic
+- [x] Booking flow UI (browse services → pick slot → checkout)
+- [x] Coupon redemption logic
+- [x] Booking confirmation email (Resend)
+- [x] Mock payment provider (end-to-end flow works without a gateway)
+- [ ] Cashfree payment integration + webhook handler (swap-in, see above)
 - [ ] Referral code generation + tracking
 - [ ] SEO: sitemap, robots.txt, LocalBusiness schema
 - [ ] Meta Pixel + GA4
+- [ ] Admin: create/manage services and slots (currently via SQL/seed only)
