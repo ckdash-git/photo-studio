@@ -13,12 +13,17 @@ export async function SiteHeader() {
         <Link href="/" className="font-semibold text-ink">
           QuickPic
         </Link>
-        <Link
-          href={user ? "/my-bookings" : "/login"}
-          className="text-sm text-slate hover:text-ink"
-        >
-          {user ? "My bookings" : "Log in"}
-        </Link>
+        <nav className="flex items-center gap-6">
+          <Link href="/photographers" className="text-sm text-slate hover:text-ink">
+            Find a photographer
+          </Link>
+          <Link
+            href={user ? "/my-bookings" : "/login"}
+            className="text-sm text-slate hover:text-ink"
+          >
+            {user ? "My bookings" : "Log in"}
+          </Link>
+        </nav>
       </div>
     </header>
   );
