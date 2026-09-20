@@ -17,6 +17,12 @@ export async function SiteHeader() {
           <Link href="/photographers" className="text-sm text-slate hover:text-ink">
             Find a photographer
           </Link>
+          <Link href="/requirements/new" className="text-sm text-slate hover:text-ink">
+            Post a job
+          </Link>
+          <Link href="/leads" className="text-sm text-slate hover:text-ink">
+            Get leads
+          </Link>
           <Link
             href={user ? "/my-bookings" : "/login"}
             className="text-sm text-slate hover:text-ink"
