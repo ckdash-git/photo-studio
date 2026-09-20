@@ -55,6 +55,9 @@ export async function createBooking(input: CreateBookingInput) {
     if (!coupon) {
       throw new BookingError("Invalid or expired coupon code");
     }
+    if (coupon.restricted_to_user_id && coupon.restricted_to_user_id !== input.userId) {
+      throw new BookingError("This coupon isn't valid for your account");
+    }
     if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) {
       throw new BookingError("This coupon has expired");
     }

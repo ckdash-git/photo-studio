@@ -49,6 +49,13 @@ export default async function AdminDashboard() {
           <p className="font-medium text-ink">Coupons</p>
           <p className="text-sm text-stone mt-0.5">Create and manage discount codes</p>
         </Link>
+        <Link
+          href="/admin/referrals"
+          className="block rounded-lg border border-hairline p-4 hover:shadow-md transition-shadow"
+        >
+          <p className="font-medium text-ink">Referral program</p>
+          <p className="text-sm text-stone mt-0.5">Reward settings, signups, conversions</p>
+        </Link>
       </div>
     </main>
   );

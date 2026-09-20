@@ -42,6 +42,7 @@ export default async function AccountPage() {
         <div className="space-y-2">
           <AccountLink href="/my-bookings">My bookings</AccountLink>
           <AccountLink href="/requirements/new">Post a job</AccountLink>
+          <AccountLink href="/invite">Invite friends</AccountLink>
         </div>
       </div>
 
