@@ -2,11 +2,12 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function getActiveServices() {
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("services")
     .select("id, name, description, price_inr, duration_minutes")
     .eq("is_active", true)
     .order("price_inr", { ascending: true });
+  if (error) console.error("getActiveServices failed:", error.message);
   return data ?? [];
 }
 
