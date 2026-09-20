@@ -31,7 +31,33 @@ export default async function HomePage() {
         </a>
       </section>
 
+      <section className="mx-auto max-w-4xl px-6 pb-16">
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="rounded-lg border border-hairline p-6">
+            <h2 className="text-lg font-semibold text-ink">Book a session instantly</h2>
+            <p className="mt-2 text-sm text-slate">
+              Pick from listed sessions below, choose a slot, pay, and you&apos;re
+              confirmed - no back and forth.
+            </p>
+            <a href="#services" className="mt-4 inline-block text-sm font-semibold text-ink underline">
+              Browse sessions
+            </a>
+          </div>
+          <div className="rounded-lg border border-hairline p-6">
+            <h2 className="text-lg font-semibold text-ink">Get quotes from photographers</h2>
+            <p className="mt-2 text-sm text-slate">
+              Have something specific in mind? Post what you need and
+              photographers in your area send you quotes.
+            </p>
+            <Link href="/requirements/new" className="mt-4 inline-block text-sm font-semibold text-ink underline">
+              Post a job
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section id="services" className="mx-auto max-w-5xl px-6 pb-24">
+        <h2 className="text-2xl font-semibold text-ink mb-6">Sessions you can book now</h2>
         {services.length === 0 ? (
           <div className="text-center py-20 text-stone">
             No sessions are open for booking right now. Check back soon.
