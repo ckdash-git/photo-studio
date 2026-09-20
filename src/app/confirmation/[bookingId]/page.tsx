@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export default async function ConfirmationPage({
   params,
@@ -7,7 +7,7 @@ export default async function ConfirmationPage({
   params: Promise<{ bookingId: string }>;
 }) {
   const { bookingId } = await params;
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data: booking } = await supabase
     .from("bookings")
