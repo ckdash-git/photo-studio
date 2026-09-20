@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { SignOutButton } from "./sign-out-button";
+import { SignOutButton } from "@/app/sign-out-button";
 
 export default async function MyBookingsPage() {
   const supabase = await createClient();

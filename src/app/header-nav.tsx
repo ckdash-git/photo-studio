@@ -21,10 +21,10 @@ export function HeaderNav({ isLoggedIn }: { isLoggedIn: boolean }) {
           </Link>
         ))}
         <Link
-          href={isLoggedIn ? "/my-bookings" : "/login"}
+          href={isLoggedIn ? "/account" : "/login"}
           className="text-sm text-slate hover:text-ink"
         >
-          {isLoggedIn ? "My bookings" : "Log in"}
+          {isLoggedIn ? "Account" : "Log in"}
         </Link>
         <Link
           href="/#services"
@@ -64,11 +64,11 @@ export function HeaderNav({ isLoggedIn }: { isLoggedIn: boolean }) {
             </Link>
           ))}
           <Link
-            href={isLoggedIn ? "/my-bookings" : "/login"}
+            href={isLoggedIn ? "/account" : "/login"}
             className="text-sm text-ink"
             onClick={() => setOpen(false)}
           >
-            {isLoggedIn ? "My bookings" : "Log in"}
+            {isLoggedIn ? "Account" : "Log in"}
           </Link>
           <Link
             href="/#services"
