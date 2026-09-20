@@ -3,6 +3,15 @@ import { redirect } from "next/navigation";
 import { getMyPhotographerAndAccess } from "@/lib/subscriptions";
 import { createClient } from "@/lib/supabase/server";
 
+function timeAgo(dateString: string) {
+  const diffMs = Date.now() - new Date(dateString).getTime();
+  const hours = Math.floor(diffMs / (1000 * 60 * 60));
+  if (hours < 1) return "just now";
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
 export default async function LeadsPage() {
   const access = await getMyPhotographerAndAccess();
   if (!access) redirect("/login");
@@ -18,10 +27,16 @@ export default async function LeadsPage() {
 
   return (
     <main className="flex-1 mx-auto max-w-3xl w-full px-6 py-16">
-      <h1 className="text-2xl font-semibold text-ink">Open leads</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-ink">Open leads</h1>
+        <span className="text-sm text-stone">{requirements?.length ?? 0} open</span>
+      </div>
       <div className="mt-8 space-y-3">
         {!requirements || requirements.length === 0 ? (
-          <p className="text-stone">No open requirements right now.</p>
+          <div className="text-center py-16 text-stone">
+            <p>No open requirements right now.</p>
+            <p className="text-sm mt-1">Check back soon - new jobs show up here as customers post them.</p>
+          </div>
         ) : (
           requirements.map((r) => (
             <Link
@@ -29,16 +44,19 @@ export default async function LeadsPage() {
               href={`/leads/${r.id}`}
               className="block rounded-lg border border-hairline p-4 hover:shadow-md transition-shadow"
             >
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-ink">{r.category}</span>
-                <span className="text-sm text-stone">{r.city}</span>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-surface text-slate">
+                  {r.category}
+                </span>
+                <span className="text-xs text-stone shrink-0">{timeAgo(r.created_at)}</span>
               </div>
-              <p className="mt-1 text-sm text-slate line-clamp-2">{r.description}</p>
-              {(r.budget_min_inr || r.budget_max_inr) && (
-                <p className="mt-1 text-sm text-stone">
-                  Budget: ₹{r.budget_min_inr ?? "?"} - ₹{r.budget_max_inr ?? "?"}
-                </p>
-              )}
+              <p className="mt-2 text-sm text-slate line-clamp-2">{r.description}</p>
+              <div className="mt-2 flex items-center justify-between text-sm text-stone">
+                <span>{r.city}</span>
+                {(r.budget_min_inr || r.budget_max_inr) && (
+                  <span>₹{r.budget_min_inr ?? "?"} - ₹{r.budget_max_inr ?? "?"}</span>
+                )}
+              </div>
             </Link>
           ))
         )}

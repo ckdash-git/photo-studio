@@ -29,8 +29,21 @@ export default async function RequirementDetailPage({
 
   return (
     <main className="flex-1 mx-auto max-w-2xl w-full px-6 py-16">
-      <h1 className="text-2xl font-semibold text-ink">{requirement.category}</h1>
-      <p className="text-sm text-stone mt-1">{requirement.city}</p>
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-surface text-slate">
+          {requirement.category}
+        </span>
+        <span
+          className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+            requirement.status === "open" ? "bg-success-bg text-success-text" : "bg-surface text-stone"
+          }`}
+        >
+          {requirement.status}
+        </span>
+      </div>
+      <h1 className="mt-3 text-2xl font-semibold text-ink">
+        {requirement.category} in {requirement.city}
+      </h1>
       <p className="mt-4 text-slate">{requirement.description}</p>
 
       <h2 className="mt-10 text-lg font-semibold text-ink">
