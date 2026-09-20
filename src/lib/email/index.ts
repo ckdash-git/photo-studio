@@ -30,6 +30,16 @@ export async function sendBookingConfirmation(input: BookingConfirmationInput) {
     to: input.to,
     replyTo: process.env.RESEND_FROM_EMAIL,
     subject: `Booking confirmed: ${input.serviceName}`,
+    text: `Hi ${input.customerName},
+
+Your booking for ${input.serviceName} is confirmed.
+
+Date & time: ${formattedDate}
+Amount paid: ₹${input.totalInr}
+Booking ID: ${input.bookingId}
+
+See you then!
+— QuickPic`,
     html: `
       <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
         <h2>Your session is confirmed</h2>

@@ -8,6 +8,7 @@ export interface CreateBookingInput {
   customerEmail: string;
   customerPhone?: string;
   couponCode?: string;
+  userId?: string;
 }
 
 export class BookingError extends Error {}
@@ -97,6 +98,7 @@ export async function createBooking(input: CreateBookingInput) {
       discount_inr: discountInr,
       total_inr: totalInr,
       status: "pending_payment",
+      user_id: input.userId ?? null,
     })
     .select()
     .single();

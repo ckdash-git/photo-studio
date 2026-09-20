@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
+import { SiteHeader } from "./site-header";
 
 // Font per DESIGN.md (MiniMax reference): DM Sans across all surfaces.
 const dmSans = DM_Sans({
@@ -42,7 +43,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${dmSans.variable} ${dmMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        <SiteHeader />
+        {children}
+      </body>
     </html>
   );
 }

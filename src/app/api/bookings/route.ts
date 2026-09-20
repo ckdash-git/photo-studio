@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createBooking, BookingError } from "@/lib/bookings";
+import { createClient } from "@/lib/supabase/server";
 
 const bodySchema = z.object({
   serviceId: z.string().uuid(),
@@ -17,8 +18,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   try {
-    const { booking, redirectUrl } = await createBooking(parsed.data);
+    const { booking, redirectUrl } = await createBooking({
+      ...parsed.data,
+      userId: user?.id,
+    });
     return NextResponse.json({ bookingId: booking.id, redirectUrl });
   } catch (err) {
     if (err instanceof BookingError) {
