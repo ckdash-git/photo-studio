@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getActiveServices } from "@/lib/services";
+import { getActivePhotographers } from "@/lib/photographers";
 
 const CARD_GRADIENTS = [
   "from-[var(--color-brand-coral)] to-[var(--color-brand-magenta)]",
@@ -9,7 +10,10 @@ const CARD_GRADIENTS = [
 ];
 
 export default async function HomePage() {
-  const services = await getActiveServices();
+  const [services, photographers] = await Promise.all([
+    getActiveServices(),
+    getActivePhotographers(3),
+  ]);
 
   return (
     <main className="flex-1">
@@ -35,26 +39,76 @@ export default async function HomePage() {
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="rounded-lg border border-hairline p-6">
             <h2 className="text-lg font-semibold text-ink">Book a session instantly</h2>
-            <p className="mt-2 text-sm text-slate">
-              Pick from listed sessions below, choose a slot, pay, and you&apos;re
-              confirmed - no back and forth.
-            </p>
+            <ol className="mt-4 space-y-2 text-sm text-slate">
+              <li>1. Pick a session below</li>
+              <li>2. Choose a slot that works</li>
+              <li>3. Pay and you&apos;re confirmed</li>
+            </ol>
             <a href="#services" className="mt-4 inline-block text-sm font-semibold text-ink underline">
               Browse sessions
             </a>
           </div>
           <div className="rounded-lg border border-hairline p-6">
             <h2 className="text-lg font-semibold text-ink">Get quotes from photographers</h2>
-            <p className="mt-2 text-sm text-slate">
-              Have something specific in mind? Post what you need and
-              photographers in your area send you quotes.
-            </p>
+            <ol className="mt-4 space-y-2 text-sm text-slate">
+              <li>1. Post what you need</li>
+              <li>2. Photographers send quotes</li>
+              <li>3. Accept the one you like</li>
+            </ol>
             <Link href="/requirements/new" className="mt-4 inline-block text-sm font-semibold text-ink underline">
               Post a job
             </Link>
           </div>
         </div>
       </section>
+
+      <section className="mx-auto max-w-4xl px-6 pb-16">
+        <div className="grid sm:grid-cols-3 gap-6 text-center">
+          <div>
+            <p className="font-semibold text-ink">Secure payments</p>
+            <p className="mt-1 text-sm text-slate">Every booking is paid for and confirmed on the platform.</p>
+          </div>
+          <div>
+            <p className="font-semibold text-ink">No hidden contact</p>
+            <p className="mt-1 text-sm text-slate">Photographer details stay private until you book.</p>
+          </div>
+          <div>
+            <p className="font-semibold text-ink">Instant confirmation</p>
+            <p className="mt-1 text-sm text-slate">Get an email the moment your booking goes through.</p>
+          </div>
+        </div>
+      </section>
+
+      {photographers.length > 0 && (
+        <section className="mx-auto max-w-5xl px-6 pb-16">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-ink">Photographers on QuickPic</h2>
+            <Link href="/photographers" className="text-sm font-semibold text-ink underline">
+              See all
+            </Link>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-4">
+            {photographers.map((p) => (
+              <Link
+                key={p.id}
+                href={`/photographers/${p.id}`}
+                className="rounded-lg border border-hairline overflow-hidden hover:shadow-md transition-shadow"
+              >
+                {p.thumbnailUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={p.thumbnailUrl} alt={p.display_name} className="h-32 w-full object-cover" />
+                ) : (
+                  <div className="h-32 bg-gradient-to-br from-[var(--color-brand-coral)] to-[var(--color-brand-magenta)]" />
+                )}
+                <div className="p-4">
+                  <p className="font-medium text-ink text-sm">{p.display_name}</p>
+                  <p className="text-xs text-stone mt-0.5">{p.city}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section id="services" className="mx-auto max-w-5xl px-6 pb-24">
         <h2 className="text-2xl font-semibold text-ink mb-6">Sessions you can book now</h2>
