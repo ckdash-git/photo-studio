@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { CopyBookingId } from "./copy-booking-id";
 
 export default async function ConfirmationPage({
   params,
@@ -61,7 +62,7 @@ export default async function ConfirmationPage({
         </div>
         <div className="flex justify-between">
           <span className="text-stone">Booking ID</span>
-          <span className="text-ink font-mono text-xs">{booking.id}</span>
+          <CopyBookingId bookingId={booking.id} />
         </div>
       </div>
     </main>
