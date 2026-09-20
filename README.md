@@ -23,8 +23,14 @@ npm install
 cp .env.example .env.local   # fill in Supabase / Resend / Cashfree keys
 ```
 
-Apply the DB schema in `supabase/migrations/0001_init.sql` via the Supabase
-SQL editor or `supabase db push`.
+Apply the DB schema in `supabase/migrations/` (run the files in order:
+0001, 0002, 0003) via the Supabase SQL editor or `supabase db push`.
+
+> If you created your Supabase project with "Automatically expose new
+> tables" disabled (the recommended default), you need 0003 — without it,
+> public reads fail with `permission denied for table services` even
+> though RLS policies look correct. RLS restricts *rows*; the base
+> `GRANT` in 0003 is what allows the read at all.
 
 ```bash
 npm run dev
