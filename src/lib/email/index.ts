@@ -25,9 +25,10 @@ export async function sendBookingConfirmation(input: BookingConfirmationInput) {
     timeZone: "Asia/Kolkata",
   });
 
-  return resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: process.env.RESEND_FROM_EMAIL ?? "bookings@yourdomain.com",
     to: input.to,
+    replyTo: process.env.RESEND_FROM_EMAIL,
     subject: `Booking confirmed: ${input.serviceName}`,
     html: `
       <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
@@ -43,4 +44,9 @@ export async function sendBookingConfirmation(input: BookingConfirmationInput) {
       </div>
     `,
   });
+
+  if (error) {
+    console.error("sendBookingConfirmation failed:", error.message, "booking:", input.bookingId);
+  }
+  return { data, error };
 }
