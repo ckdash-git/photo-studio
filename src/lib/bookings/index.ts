@@ -22,6 +22,7 @@ export async function createBooking(input: CreateBookingInput) {
     .single();
 
   if (serviceError || !service || !service.is_active) {
+    if (serviceError) console.error("createBooking: service lookup failed:", serviceError.message);
     throw new BookingError("Service not found or unavailable");
   }
 
@@ -32,6 +33,7 @@ export async function createBooking(input: CreateBookingInput) {
     .single();
 
   if (slotError || !slot || slot.service_id !== service.id) {
+    if (slotError) console.error("createBooking: slot lookup failed:", slotError.message);
     throw new BookingError("Slot not found");
   }
   if (slot.is_booked) {
@@ -100,6 +102,7 @@ export async function createBooking(input: CreateBookingInput) {
     .single();
 
   if (bookingError || !booking) {
+    if (bookingError) console.error("createBooking: insert failed:", bookingError.message);
     // Release the slot lock since the booking row failed to create.
     await db.from("slots").update({ is_booked: false }).eq("id", slot.id);
     throw new BookingError("Could not create booking, please try again");
