@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>QuickPic — Build Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-primary: #0a0a0a;
+    --color-on-primary: #ffffff;
+    --color-brand-coral: #ff5530;
+    --color-brand-magenta: #ea5ec1;
+    --color-brand-blue: #1456f0;
+    --color-brand-purple: #a855f7;
+    --color-brand-cyan: #3daeff;
+    --color-canvas: #ffffff;
+    --color-surface: #f7f8fa;
+    --color-surface-soft: #f2f3f5;
+    --color-hairline: #e5e7eb;
+    --color-ink: #0a0a0a;
+    --color-slate: #45515e;
+    --color-stone: #8e8e93;
+    --color-muted: #a8aab2;
+    --color-success-bg: #e8ffea;
+    --color-success-text: #1ba673;
+    --color-warn-bg: #fff4e5;
+    --color-warn-text: #b25e09;
+    --color-plan-bg: #f2f3f5;
+    --color-plan-text: #5f5f5f;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    color-scheme: light;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --color-canvas: #0a0a0a;
+      --color-surface: #151517;
+      --color-surface-soft: #1c1c1f;
+      --color-hairline: #2a2a2e;
+      --color-ink: #f5f5f5;
+      --color-slate: #b8bfc7;
+      --color-stone: #8e8e93;
+      --color-success-bg: #0f2a1c;
+      --color-success-text: #4ade91;
+      --color-warn-bg: #2e2109;
+      --color-warn-text: #f2a94e;
+      --color-plan-bg: #1c1c1f;
+      --color-plan-text: #9a9aa0;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --color-canvas: #0a0a0a;
+    --color-surface: #151517;
+    --color-surface-soft: #1c1c1f;
+    --color-hairline: #2a2a2e;
+    --color-ink: #f5f5f5;
+    --color-slate: #b8bfc7;
+    --color-stone: #8e8e93;
+    --color-success-bg: #0f2a1c;
+    --color-success-text: #4ade91;
+    --color-warn-bg: #2e2109;
+    --color-warn-text: #f2a94e;
+    --color-plan-bg: #1c1c1f;
+    --color-plan-text: #9a9aa0;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  }
+  body {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin: 0; }
+  .sub { color: var(--color-slate); font-size: 14px; margin: 4px 0 0; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 24px 0; }
+  .stat { background: var(--color-surface); border: 1px solid var(--color-hairline); border-radius: var(--radius-md); padding: 14px 16px; }
+  .stat .n { font-size: 22px; font-weight: 700; }
+  .stat .l { font-size: 12px; color: var(--color-stone); margin-top: 2px; }
+  .progress-bar { height: 8px; border-radius: 99px; background: var(--color-surface-soft); overflow: hidden; margin-top: 10px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--color-brand-coral), var(--color-brand-magenta)); border-radius: 99px; transition: width 0.3s; }
+
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 20px 0; }
+  input[type="text"], select, textarea {
+    font-family: inherit; font-size: 14px; border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm); padding: 8px 12px; background: var(--color-canvas); color: var(--color-ink);
+  }
+  #search { flex: 1; min-width: 160px; }
+  .btn {
+    font-family: inherit; font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+    border-radius: var(--radius-sm); padding: 8px 14px; background: var(--color-surface); color: var(--color-ink);
+  }
+  .btn:hover { background: var(--color-surface-soft); }
+  .btn-primary { background: var(--color-primary); color: var(--color-on-primary); }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-danger { color: var(--color-brand-coral); }
+
+  .category { margin-bottom: 28px; }
+  .category-head { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 8px 0; border-bottom: 1px solid var(--color-hairline); }
+  .category-head h2 { font-size: 16px; font-weight: 600; margin: 0; }
+  .category-count { font-size: 12px; color: var(--color-stone); font-family: 'DM Mono', monospace; }
+  .category-items { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .category.collapsed .category-items { display: none; }
+  .chev { transition: transform 0.15s; color: var(--color-stone); }
+  .category.collapsed .chev { transform: rotate(-90deg); }
+
+  .item { border: 1px solid var(--color-hairline); border-radius: var(--radius-md); padding: 12px 14px; background: var(--color-canvas); }
+  .item-row { display: flex; align-items: flex-start; gap: 10px; }
+  .pill {
+    flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px;
+    cursor: pointer; user-select: none; white-space: nowrap; margin-top: 1px;
+  }
+  .pill.done { background: var(--color-success-bg); color: var(--color-success-text); }
+  .pill.progress { background: var(--color-warn-bg); color: var(--color-warn-text); }
+  .pill.planned { background: var(--color-plan-bg); color: var(--color-plan-text); }
+  .item-title { font-weight: 600; font-size: 14px; flex: 1; }
+  .item-title.done-strike { color: var(--color-slate); }
+  .item-desc { font-size: 13px; color: var(--color-slate); margin: 4px 0 0 0; }
+  .item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .icon-btn { background: none; border: none; cursor: pointer; color: var(--color-stone); font-size: 13px; padding: 2px 6px; border-radius: 4px; }
+  .icon-btn:hover { background: var(--color-surface); color: var(--color-ink); }
+  .item-detail { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-hairline); font-size: 13px; color: var(--color-slate); }
+  .item-detail textarea { width: 100%; min-height: 60px; font-size: 13px; }
+
+  .add-form { border: 1px dashed var(--color-hairline); border-radius: var(--radius-md); padding: 14px; margin-top: 10px; display: none; gap: 8px; flex-direction: column; }
+  .add-form.open { display: flex; }
+  .add-form-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .add-form-row input, .add-form-row select { flex: 1; min-width: 140px; }
+
+  .empty { text-align: center; color: var(--color-stone); padding: 40px 0; font-size: 14px; }
+  footer.note { margin-top: 40px; font-size: 12px; color: var(--color-stone); text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>QuickPic — Build Tracker</h1>
+      <p class="sub">What's shipped, in progress, and planned</p>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn" id="exportBtn">Export JSON</button>
+      <button class="btn" id="importBtn">Import JSON</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="statDone">0</div><div class="l">Done</div></div>
+    <div class="stat"><div class="n" id="statProgress">0</div><div class="l">In progress</div></div>
+    <div class="stat"><div class="n" id="statPlanned">0</div><div class="l">Planned</div></div>
+    <div class="stat"><div class="n" id="statPct">0%</div><div class="l">Complete
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div></div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Search…">
+    <select id="statusFilter">
+      <option value="all">All statuses</option>
+      <option value="done">Done</option>
+      <option value="progress">In progress</option>
+      <option value="planned">Planned</option>
+    </select>
+    <button class="btn btn-primary" id="addToggle">+ Add item</button>
+    <button class="btn btn-danger" id="resetBtn">Reset to defaults</button>
+  </div>
+
+  <div id="categories"></div>
+  <div class="empty" id="emptyState" style="display:none;">Nothing matches your search/filter.</div>
+
+  <footer class="note">Stored in this browser only — use Export JSON to back up.</footer>
+</div>
+
+<script>
+const STORAGE_KEY = 'quickpic-tracker-v1';
+
+const DEFAULT_DATA = [
+  { cat: "Core Booking Platform", items: [
+    { t: "Next.js 15 scaffold (TypeScript, Tailwind v4, App Router)", d: "Project foundation, deployable to Vercel.", s: "done" },
+    { t: "MiniMax DESIGN.md tokens wired into Tailwind + DM Sans font", d: "Colors, type scale, radii pulled from DESIGN.md into globals.css theme.", s: "done" },
+    { t: "DB schema: services, slots, bookings, payments, coupons, referrals", d: "Core relational schema with RLS enabled from the start.", s: "done" },
+    { t: "Home page service grid with gradient cards", d: "MiniMax-style gradient treatment, one per service.", s: "done" },
+    { t: "Slot picker + checkout form", d: "Pick a slot, enter details, optional coupon code.", s: "done" },
+    { t: "Coupon validation + atomic slot locking", d: "Prevents double-booking via conditional UPDATE; coupon expiry/redemption-limit checks.", s: "done" },
+    { t: "Booking confirmation page", d: "Shows status, session, date, amount, booking ID.", s: "done" },
+    { t: "Booking confirmation email via Resend", d: "HTML + plain-text versions, sent on payment confirm.", s: "done" },
+    { t: "Admin panel for managing services/slots", d: "Currently raw SQL only (seed.sql) - no UI yet.", s: "planned" },
+  ]},
+  { cat: "Payments", items: [
+    { t: "Payment provider abstraction", d: "PaymentProvider interface - swapping mock for a real gateway touches one file, not the booking flow.", s: "done" },
+    { t: "Mock payment provider", d: "Auto-confirms bookings and subscriptions for full end-to-end testing without a gateway.", s: "done" },
+    { t: "Razorpay setup research (KYC, test/live keys, Orders API flow)", d: "Account creation, CKYC fast-track, Orders API + Checkout pattern documented.", s: "done" },
+    { t: "Real Razorpay integration - customer bookings", d: "Swap mock provider for real Orders API + webhook signature verification once live keys are in hand.", s: "planned" },
+    { t: "Real Razorpay integration - photographer lead subscriptions", d: "Same swap, different flow (see Marketplace).", s: "planned" },
+    { t: "Commission-based marketplace payments (Route/Easy Split)", d: "For when direct commission-per-booking replaces the flat lead-fee model. Needs photographer vendor KYC via the gateway's own onboarding.", s: "planned" },
+  ]},
+  { cat: "Accounts & Auth", items: [
+    { t: "Passwordless magic-link login (Supabase Auth)", d: "No password - email link signs the customer/photographer in.", s: "done" },
+    { t: "Auth callback route", d: "Exchanges the magic-link code for a session.", s: "done" },
+    { t: "My Bookings page", d: "Logged-in customers see their own bookings only (RLS-scoped).", s: "done" },
+    { t: "bookings.user_id + RLS policy", d: "Links guest or logged-in bookings to an account.", s: "done" },
+    { t: "Custom SMTP (Resend) for Supabase Auth emails", d: "Routes magic-link emails through the verified quickpic.click domain instead of Supabase's shared, rate-limited sender.", s: "progress" },
+  ]},
+  { cat: "Email & Deliverability", items: [
+    { t: "Resend domain (quickpic.click) verified", d: "SPF + DKIM confirmed via Resend dashboard.", s: "done" },
+    { t: "Plain-text email alternative", d: "Improves spam scoring alongside the HTML version.", s: "done" },
+    { t: "Error logging for failed sends", d: "Resend's error field is now surfaced instead of silently dropped.", s: "done" },
+    { t: "DMARC record", d: "Check/add _dmarc.quickpic.click TXT record - not auto-added by Resend's wizard.", s: "progress" },
+    { t: "Domain reputation warm-up", d: "New domain, currently landing in spam - improves with real send volume over time.", s: "progress" },
+    { t: "Support addresses (support@, hello@) via Spaceship forwarding", d: "Free forwarding available, but conflicts with Resend's MX record on the root domain - needs Resend moved to a mail. subdomain first.", s: "planned" },
+    { t: "Move Resend sending to mail.quickpic.click", d: "Frees the root domain's MX record for email forwarding; also Resend's own recommended practice for domain reputation.", s: "planned" },
+  ]},
+  { cat: "Photographer Marketplace", items: [
+    { t: "Photographer profiles + portfolios (public directory)", d: "Self-service create/edit, public browsing.", s: "done" },
+    { t: "No contact info ever exposed publicly", d: "Enforced at the schema level - phone/email/name simply don't exist on public-read tables.", s: "done" },
+    { t: "Requirements posting (customers post jobs)", d: "Category, city, date, budget range, description.", s: "done" },
+    { t: "Proposals (photographers quote)", d: "One proposal per photographer per requirement.", s: "done" },
+    { t: "Lead access subscription gating", d: "₹499/mo mock subscription unlocks browsing + quoting.", s: "done" },
+    { t: "Accept/decline proposals flow", d: "Customer accepts one, others auto-decline, requirement closes.", s: "done" },
+    { t: "Portfolio direct image upload", d: "Currently pasted URLs only - real upload via Supabase Storage is a clean next step.", s: "planned" },
+    { t: "Image watermarking on upload", d: "Discourages screenshotting straight to a photographer's Instagram DMs.", s: "planned" },
+    { t: "Masked/proxy calling", d: "Temporary numbers (e.g. via Exotel) so customer and photographer never see real numbers.", s: "planned" },
+    { t: "In-platform chat with contact-info filtering", d: "Server-side regex blocking phone numbers/socials to prevent going off-platform.", s: "planned" },
+  ]},
+  { cat: "SEO & Marketing", items: [
+    { t: "Base SEO metadata (title, description, OpenGraph)", d: "Set in root layout.", s: "done" },
+    { t: "sitemap.xml", d: "", s: "planned" },
+    { t: "robots.txt", d: "", s: "planned" },
+    { t: "LocalBusiness/Service schema markup", d: "Helps with \"photographer near me\" style search intent.", s: "planned" },
+    { t: "Meta Pixel", d: "Needed before running Meta ads as planned.", s: "planned" },
+    { t: "GA4", d: "", s: "planned" },
+  ]},
+  { cat: "Mobile App", items: [
+    { t: "Flutter WebView wrapper strategy", d: "Site renders inside a WebView; login/session carries over automatically since it's cookie-based.", s: "done" },
+    { t: "Flutter project setup", d: "Not started yet.", s: "planned" },
+    { t: "Native iOS Liquid Glass chrome via platform views", d: "UiKitView + MethodChannel for nav bar/FAB/sheets built in native SwiftUI with .glassEffect() - scoped to chrome around the WebView, not the web content itself.", s: "planned" },
+  ]},
+  { cat: "Legal & Compliance", items: [
+    { t: "Payment aggregator (RBI) risk identified", d: "Chose the lead/subscription model specifically to avoid needing PA authorization for now.", s: "done" },
+    { t: "Photographer vendor KYC (for commission model)", d: "Handled by Cashfree/Razorpay's own split-payment onboarding when that model is adopted - not manual work for us.", s: "planned" },
+    { t: "Tourist guide vertical - liability/insurance review", d: "Physical-safety risk is materially higher than photography; needs an actual lawyer before launch, not just KYC.", s: "planned" },
+  ]},
+  { cat: "Infrastructure & Ops", items: [
+    { t: "GitHub repo + commit-by-commit workflow", d: "ckdash-git/photo-studio, fine-grained token access.", s: "done" },
+    { t: "Supabase project configured (RLS + grants)", d: "Several rounds of fixes: auto-expose-tables setting, service_role grants, missing UPDATE policy on proposals.", s: "done" },
+    { t: "Domain quickpic.click purchased + DNS configured", d: "Registrar: Spaceship.", s: "done" },
+    { t: "QuickPic rebrand across site/email/README", d: "", s: "done" },
+    { t: "GitHub repo rename to match QuickPic", d: "Optional - deferred, user's call since it changes the clone URL.", s: "planned" },
+  ]},
+];
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) { console.error('Failed to load tracker data', e); }
+  return structuredClone(DEFAULT_DATA);
+}
+function save(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+  catch (e) { console.error('Failed to save tracker data', e); }
+}
+
+let data = load();
+let collapsedCats = new Set();
+let expandedItem = null; // `${catIdx}-${itemIdx}`
+
+function uid() { return Math.random().toString(36).slice(2, 9); }
+data.forEach(cat => cat.items.forEach(it => { if (!it.id) it.id = uid(); }));
+
+function statusLabel(s) { return s === 'done' ? 'Done' : s === 'progress' ? 'In progress' : 'Planned'; }
+function nextStatus(s) { return s === 'planned' ? 'progress' : s === 'progress' ? 'done' : 'planned'; }
+
+function render() {
+  const search = document.getElementById('search').value.trim().toLowerCase();
+  const statusFilter = document.getElementById('statusFilter').value;
+  const container = document.getElementById('categories');
+  container.innerHTML = '';
+
+  let totalDone = 0, totalProgress = 0, totalPlanned = 0, totalAll = 0;
+  let anyVisible = false;
+
+  data.forEach((cat, ci) => {
+    cat.items.forEach(it => {
+      totalAll++;
+      if (it.s === 'done') totalDone++;
+      else if (it.s === 'progress') totalProgress++;
+      else totalPlanned++;
+    });
+
+    const filtered = cat.items.filter((it, ii) => {
+      const matchesSearch = !search || it.t.toLowerCase().includes(search) || (it.d || '').toLowerCase().includes(search);
+      const matchesStatus = statusFilter === 'all' || it.s === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+    if (filtered.length === 0) return;
+    anyVisible = true;
+
+    const doneCount = cat.items.filter(i => i.s === 'done').length;
+    const catEl = document.createElement('div');
+    catEl.className = 'category' + (collapsedCats.has(cat.cat) ? ' collapsed' : '');
+
+    const head = document.createElement('div');
+    head.className = 'category-head';
+    head.innerHTML = `<h2><span class="chev">▾</span> ${cat.cat}</h2><span class="category-count">${doneCount}/${cat.items.length}</span>`;
+    head.onclick = () => { collapsedCats.has(cat.cat) ? collapsedCats.delete(cat.cat) : collapsedCats.add(cat.cat); render(); };
+    catEl.appendChild(head);
+
+    const itemsWrap = document.createElement('div');
+    itemsWrap.className = 'category-items';
+
+    filtered.forEach(it => {
+      const ii = cat.items.indexOf(it);
+      const itemEl = document.createElement('div');
+      itemEl.className = 'item';
+      const key = it.id;
+      const isExpanded = expandedItem === key;
+
+      itemEl.innerHTML = `
+        <div class="item-row">
+          <span class="pill ${it.s}" data-action="cycle" data-key="${key}">${statusLabel(it.s)}</span>
+          <div style="flex:1;">
+            <div class="item-title ${it.s === 'done' ? 'done-strike' : ''}">${escapeHtml(it.t)}</div>
+            ${it.d ? `<p class="item-desc">${escapeHtml(it.d)}</p>` : ''}
+          </div>
+          <div class="item-actions">
+            <button class="icon-btn" data-action="expand" data-key="${key}">${isExpanded ? '▲' : '✎'}</button>
+            <button class="icon-btn" data-action="delete" data-key="${key}">✕</button>
+          </div>
+        </div>
+        ${isExpanded ? `
+        <div class="item-detail">
+          <textarea data-action="edit-detail" data-key="${key}" placeholder="Notes / detail…">${escapeHtml(it.d || '')}</textarea>
+          <div style="margin-top:6px; display:flex; gap:6px;">
+            <input type="text" data-action="edit-title" data-key="${key}" value="${escapeHtml(it.t)}" style="flex:1;">
+          </div>
+        </div>` : ''}
+      `;
+      itemsWrap.appendChild(itemEl);
+    });
+
+    catEl.appendChild(itemsWrap);
+    container.appendChild(catEl);
+  });
+
+  document.getElementById('emptyState').style.display = anyVisible ? 'none' : 'block';
+  document.getElementById('statDone').textContent = totalDone;
+  document.getElementById('statProgress').textContent = totalProgress;
+  document.getElementById('statPlanned').textContent = totalPlanned;
+  const pct = totalAll ? Math.round((totalDone / totalAll) * 100) : 0;
+  document.getElementById('statPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  save(data);
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function findItem(key) {
+  for (const cat of data) {
+    const it = cat.items.find(i => i.id === key);
+    if (it) return it;
+  }
+  return null;
+}
+
+document.getElementById('categories').addEventListener('click', (e) => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const key = el.dataset.key;
+  const action = el.dataset.action;
+
+  if (action === 'cycle') {
+    const it = findItem(key);
+    it.s = nextStatus(it.s);
+    render();
+  } else if (action === 'expand') {
+    expandedItem = expandedItem === key ? null : key;
+    render();
+  } else if (action === 'delete') {
+    if (!confirm('Delete this item?')) return;
+    data.forEach(cat => { cat.items = cat.items.filter(i => i.id !== key); });
+    render();
+  }
+});
+
+document.getElementById('categories').addEventListener('input', (e) => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const key = el.dataset.key;
+  const it = findItem(key);
+  if (!it) return;
+  if (el.dataset.action === 'edit-detail') it.d = el.value;
+  if (el.dataset.action === 'edit-title') it.t = el.value;
+  save(data);
+});
+
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('statusFilter').addEventListener('change', render);
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!confirm('Reset all items to the default seed list? This discards your edits.')) return;
+  data = structuredClone(DEFAULT_DATA);
+  data.forEach(cat => cat.items.forEach(it => { if (!it.id) it.id = uid(); }));
+  render();
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'quickpic-tracker.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('importBtn').addEventListener('click', () => {
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      data = parsed;
+      data.forEach(cat => cat.items.forEach(it => { if (!it.id) it.id = uid(); }));
+      render();
+    } catch (err) { alert('Invalid JSON file'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+const addToggle = document.getElementById('addToggle');
+let addFormEl = null;
+addToggle.addEventListener('click', () => {
+  if (addFormEl) { addFormEl.remove(); addFormEl = null; return; }
+  addFormEl = document.createElement('div');
+  addFormEl.className = 'add-form open';
+  const categoryNames = data.map(c => c.cat);
+  addFormEl.innerHTML = `
+    <div class="add-form-row">
+      <input type="text" id="newTitle" placeholder="What needs doing?">
+    </div>
+    <div class="add-form-row">
+      <select id="newCategory">
+        ${categoryNames.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')}
+        <option value="__new__">+ New category…</option>
+      </select>
+      <input type="text" id="newCategoryName" placeholder="New category name" style="display:none;">
+      <select id="newStatus">
+        <option value="planned">Planned</option>
+        <option value="progress">In progress</option>
+        <option value="done">Done</option>
+      </select>
+    </div>
+    <div class="add-form-row">
+      <input type="text" id="newDesc" placeholder="Short description (optional)">
+    </div>
+    <div class="add-form-row">
+      <button class="btn btn-primary" id="saveNewItem">Add</button>
+    </div>
+  `;
+  document.querySelector('.toolbar').insertAdjacentElement('afterend', addFormEl);
+
+  document.getElementById('newCategory').addEventListener('change', (e) => {
+    document.getElementById('newCategoryName').style.display = e.target.value === '__new__' ? 'block' : 'none';
+  });
+
+  document.getElementById('saveNewItem').addEventListener('click', () => {
+    const title = document.getElementById('newTitle').value.trim();
+    if (!title) return;
+    let catName = document.getElementById('newCategory').value;
+    if (catName === '__new__') {
+      catName = document.getElementById('newCategoryName').value.trim() || 'Uncategorized';
+    }
+    const status = document.getElementById('newStatus').value;
+    const desc = document.getElementById('newDesc').value.trim();
+
+    let cat = data.find(c => c.cat === catName);
+    if (!cat) { cat = { cat: catName, items: [] }; data.push(cat); }
+    cat.items.push({ id: uid(), t: title, d: desc, s: status });
+
+    addFormEl.remove();
+    addFormEl = null;
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
