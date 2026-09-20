@@ -1,10 +1,11 @@
-# Photo Studio Booking Platform
+# QuickPic
 
 Web platform for booking photo shoot sessions — slot selection, payment,
 coupons, referrals, and confirmation emails. Built to also render inside a
 Flutter WebView for app store distribution.
 
-Repo name is a placeholder; a final product name is still to be decided.
+Live domain: quickpic.click. GitHub repo is still `photo-studio` — rename
+it in repo Settings whenever convenient, it doesn't affect anything here.
 
 ## Stack
 

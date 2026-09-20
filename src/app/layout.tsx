@@ -20,14 +20,14 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Photo Studio | Book your photo shoot session",
-    template: "%s | Photo Studio",
+    default: "QuickPic | Book your photo shoot session",
+    template: "%s | QuickPic",
   },
   description:
     "Reserve professional photo shoot sessions online. Pick a slot, pay securely, get instant confirmation.",
   openGraph: {
     type: "website",
-    siteName: "Photo Studio",
+    siteName: "QuickPic",
   },
   robots: {
     index: true,

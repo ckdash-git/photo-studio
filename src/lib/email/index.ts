@@ -41,6 +41,7 @@ export async function sendBookingConfirmation(input: BookingConfirmationInput) {
           <tr><td style="color: #666;">Booking ID</td><td>${input.bookingId}</td></tr>
         </table>
         <p>See you then!</p>
+        <p style="color: #999; font-size: 12px; margin-top: 24px;">— QuickPic</p>
       </div>
     `,
   });
