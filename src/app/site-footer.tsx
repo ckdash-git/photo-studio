@@ -14,8 +14,11 @@ export function SiteFooter() {
           <Link href="/leads" className="hover:text-ink">For photographers</Link>
         </nav>
       </div>
-      <div className="mx-auto max-w-5xl px-6 pb-8 text-xs text-stone">
-        © {new Date().getFullYear()} QuickPic
+      <div className="mx-auto max-w-5xl px-6 pb-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-stone">
+        <span>© {new Date().getFullYear()} QuickPic</span>
+        <Link href="/terms" className="hover:text-ink">Terms</Link>
+        <Link href="/privacy" className="hover:text-ink">Privacy</Link>
+        <Link href="/refund-policy" className="hover:text-ink">Refunds</Link>
       </div>
     </footer>
   );
