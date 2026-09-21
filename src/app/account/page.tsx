@@ -52,6 +52,8 @@ export default async function AccountPage() {
           {photographer ? (
             <>
               <AccountLink href="/become-a-photographer">Edit photographer profile</AccountLink>
+              <AccountLink href="/my-services">My bookable sessions</AccountLink>
+              <AccountLink href="/my-services/requests">Booking requests</AccountLink>
               <AccountLink href="/leads">Browse leads</AccountLink>
               <AccountLink href="/lead-access">Lead access</AccountLink>
             </>

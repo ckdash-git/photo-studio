@@ -12,14 +12,29 @@ export default async function ConfirmationPage({
 
   const { data: booking } = await supabase
     .from("bookings")
-    .select("id, customer_name, total_inr, status, slots(starts_at, services(name))")
+    .select("id, customer_name, total_inr, status, requested_starts_at, slots(starts_at, services(name)), services(name)")
     .eq("id", bookingId)
     .single();
 
   if (!booking) notFound();
 
-  const slot = booking.slots as unknown as { starts_at: string; services: { name: string } };
+  const slotJoin = booking.slots as unknown as { starts_at: string; services: { name: string } } | null;
+  const directService = booking.services as unknown as { name: string } | null;
+  const serviceName = slotJoin?.services.name ?? directService?.name ?? "Session";
+  const startsAt = slotJoin ? slotJoin.starts_at : booking.requested_starts_at;
   const isConfirmed = booking.status === "confirmed";
+  const isAwaitingPhotographer = booking.status === "pending_confirmation";
+
+  const heading = isConfirmed
+    ? "Booking confirmed"
+    : isAwaitingPhotographer
+      ? "Request sent"
+      : "Payment pending";
+  const message = isConfirmed
+    ? `${booking.customer_name}, your session is booked. A confirmation email is on its way.`
+    : isAwaitingPhotographer
+      ? "The photographer will review your requested time and confirm shortly - you'll get an email when it's ready to pay."
+      : "We haven't received your payment yet. Refresh this page in a moment.";
 
   return (
     <main className="flex-1 mx-auto max-w-md w-full px-6 py-24 text-center">
@@ -32,32 +47,28 @@ export default async function ConfirmationPage({
           {isConfirmed ? "✓" : "…"}
         </span>
       </div>
-      <h1 className="mt-6 text-2xl font-semibold text-ink">
-        {isConfirmed ? "Booking confirmed" : "Payment pending"}
-      </h1>
-      <p className="mt-2 text-slate">
-        {isConfirmed
-          ? `${booking.customer_name}, your session is booked. A confirmation email is on its way.`
-          : "We haven't received your payment yet. Refresh this page in a moment."}
-      </p>
+      <h1 className="mt-6 text-2xl font-semibold text-ink">{heading}</h1>
+      <p className="mt-2 text-slate">{message}</p>
 
       <div className="mt-8 rounded-lg border border-hairline p-5 text-left text-sm space-y-2">
         <div className="flex justify-between">
           <span className="text-stone">Session</span>
-          <span className="text-ink font-medium">{slot.services.name}</span>
+          <span className="text-ink font-medium">{serviceName}</span>
         </div>
+        {startsAt && (
+          <div className="flex justify-between">
+            <span className="text-stone">{isAwaitingPhotographer ? "Requested time" : "Date & time"}</span>
+            <span className="text-ink font-medium">
+              {new Date(startsAt).toLocaleString("en-IN", {
+                dateStyle: "medium",
+                timeStyle: "short",
+                timeZone: "Asia/Kolkata",
+              })}
+            </span>
+          </div>
+        )}
         <div className="flex justify-between">
-          <span className="text-stone">Date & time</span>
-          <span className="text-ink font-medium">
-            {new Date(slot.starts_at).toLocaleString("en-IN", {
-              dateStyle: "medium",
-              timeStyle: "short",
-              timeZone: "Asia/Kolkata",
-            })}
-          </span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-stone">Amount paid</span>
+          <span className="text-stone">{isConfirmed ? "Amount paid" : "Amount"}</span>
           <span className="text-ink font-medium">₹{booking.total_inr}</span>
         </div>
         <div className="flex justify-between">

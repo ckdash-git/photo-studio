@@ -61,3 +61,52 @@ See you then!
   }
   return { data, error };
 }
+
+export interface BookingAcceptedInput {
+  to: string;
+  customerName: string;
+  serviceName: string;
+  payUrl: string;
+  totalInr: number;
+}
+
+export async function sendBookingAccepted(input: BookingAcceptedInput) {
+  if (!resend) {
+    console.warn("RESEND_API_KEY not set - skipping booking-accepted email");
+    return { skipped: true };
+  }
+
+  const { data, error } = await resend.emails.send({
+    from: process.env.RESEND_FROM_EMAIL ?? "bookings@yourdomain.com",
+    to: input.to,
+    replyTo: process.env.RESEND_FROM_EMAIL,
+    subject: `Your request was accepted: ${input.serviceName}`,
+    text: `Hi ${input.customerName},
+
+Good news - your request for ${input.serviceName} was accepted. Complete payment to confirm your booking:
+
+${input.payUrl}
+
+Amount: ₹${input.totalInr}
+
+— QuickPic`,
+    html: `
+      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+        <h2>Your request was accepted</h2>
+        <p>Hi ${input.customerName},</p>
+        <p>Your request for <strong>${input.serviceName}</strong> was accepted. Complete payment to confirm your booking.</p>
+        <p style="margin: 24px 0;">
+          <a href="${input.payUrl}" style="background: #0A0A0A; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+            Pay ₹${input.totalInr}
+          </a>
+        </p>
+        <p style="color: #999; font-size: 12px; margin-top: 24px;">— QuickPic</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("sendBookingAccepted failed:", error.message);
+  }
+  return { data, error };
+}

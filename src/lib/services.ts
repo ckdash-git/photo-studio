@@ -4,23 +4,30 @@ export async function getActiveServices() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("services")
-    .select("id, name, description, price_inr, duration_minutes")
+    .select("id, name, description, price_inr, duration_minutes, photographer_id, photographers(display_name)")
     .eq("is_active", true)
     .order("price_inr", { ascending: true });
   if (error) console.error("getActiveServices failed:", error.message);
   return data ?? [];
 }
 
-export async function getServiceWithOpenSlots(serviceId: string) {
+export async function getServiceDetail(serviceId: string) {
   const supabase = await createClient();
   const { data: service } = await supabase
     .from("services")
-    .select("id, name, description, price_inr, duration_minutes")
+    .select("id, name, description, price_inr, duration_minutes, photographer_id, photographers(display_name)")
     .eq("id", serviceId)
     .eq("is_active", true)
     .single();
 
   if (!service) return null;
+
+  // Admin-owned services (no photographer) still use the fixed-slot
+  // system - unchanged, existing behavior. Photographer-owned services
+  // use free-form date/time requests instead (see the booking page).
+  if (service.photographer_id) {
+    return { service, slots: null };
+  }
 
   const { data: slots } = await supabase
     .from("slots")

@@ -18,8 +18,16 @@ export default async function HomePage() {
   ]);
 
   return (
-    <main className="flex-1">
-      <section className="mx-auto max-w-4xl px-6 pt-24 pb-16 text-center">
+    <main className="flex-1 relative overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[600px] opacity-[0.15] blur-3xl"
+        style={{
+          background:
+            "radial-gradient(circle at 30% 30%, var(--color-brand-coral), transparent 60%), radial-gradient(circle at 70% 60%, var(--color-brand-purple), transparent 60%)",
+        }}
+      />
+      <section className="mx-auto max-w-4xl px-6 pt-24 pb-16 text-center relative">
         <h1 className="text-5xl sm:text-[80px] font-semibold leading-[1.1] tracking-[-2px] text-ink">
           Your next shoot,
           <br />
@@ -139,29 +147,33 @@ export default async function HomePage() {
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {services.map((service, i) => (
-              <Link
-                key={service.id}
-                href={`/book/${service.id}`}
-                className="group rounded-lg border border-hairline overflow-hidden bg-canvas hover:shadow-md transition-shadow"
-              >
-                <div
-                  className={`h-28 bg-gradient-to-br ${CARD_GRADIENTS[i % CARD_GRADIENTS.length]}`}
-                />
-                <div className="p-5">
-                  <h3 className="text-xl font-semibold text-ink">{service.name}</h3>
-                  {service.description && (
-                    <p className="mt-1.5 text-sm text-slate line-clamp-2">
-                      {service.description}
-                    </p>
-                  )}
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="text-sm text-stone">{service.duration_minutes} min</span>
-                    <span className="font-semibold text-ink">₹{service.price_inr}</span>
+            {services.map((service, i) => {
+              const photographer = service.photographers as unknown as { display_name: string } | null;
+              return (
+                <Link
+                  key={service.id}
+                  href={`/book/${service.id}`}
+                  className="group rounded-lg border border-hairline overflow-hidden bg-canvas hover:shadow-md transition-shadow"
+                >
+                  <div
+                    className={`h-28 bg-gradient-to-br ${CARD_GRADIENTS[i % CARD_GRADIENTS.length]}`}
+                  />
+                  <div className="p-5">
+                    <h3 className="text-xl font-semibold text-ink">{service.name}</h3>
+                    {photographer && <p className="text-xs text-stone mt-0.5">by {photographer.display_name}</p>}
+                    {service.description && (
+                      <p className="mt-1.5 text-sm text-slate line-clamp-2">
+                        {service.description}
+                      </p>
+                    )}
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-sm text-stone">{service.duration_minutes} min</span>
+                      <span className="font-semibold text-ink">₹{service.price_inr}</span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>

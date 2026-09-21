@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
   const { data: booking } = await db
     .from("bookings")
-    .select("*, slots(starts_at, services(name))")
+    .select("*, slots(starts_at, services(name)), services(name)")
     .eq("id", bookingId)
     .single();
 
@@ -32,12 +32,20 @@ export async function GET(req: NextRequest) {
 
   await maybeRewardReferrer(booking.user_id);
 
-  const slot = booking.slots as unknown as { starts_at: string; services: { name: string } };
+  // Slot-based bookings carry the time via slots.starts_at; free-form
+  // (marketplace) bookings carry it directly on the booking row via
+  // requested_starts_at, with no slot at all.
+  const slotJoin = booking.slots as unknown as { starts_at: string; services: { name: string } } | null;
+  const directService = booking.services as unknown as { name: string } | null;
+
+  const serviceName = slotJoin?.services.name ?? directService?.name ?? "your session";
+  const startsAt = slotJoin ? new Date(slotJoin.starts_at) : new Date(booking.requested_starts_at);
+
   await sendBookingConfirmation({
     to: booking.customer_email,
     customerName: booking.customer_name,
-    serviceName: slot.services.name,
-    startsAt: new Date(slot.starts_at),
+    serviceName,
+    startsAt,
     totalInr: booking.total_inr,
     bookingId: booking.id,
   });

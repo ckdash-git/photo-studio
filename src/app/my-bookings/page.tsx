@@ -12,7 +12,7 @@ export default async function MyBookingsPage() {
 
   const { data: bookings } = await supabase
     .from("bookings")
-    .select("id, status, total_inr, created_at, slots(starts_at, services(name))")
+    .select("id, status, total_inr, created_at, requested_starts_at, slots(starts_at, services(name)), services(name)")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -31,14 +31,15 @@ export default async function MyBookingsPage() {
           </p>
         ) : (
           bookings.map((booking) => {
-            const slot = booking.slots as unknown as {
-              starts_at: string;
-              services: { name: string };
-            };
+            const slotJoin = booking.slots as unknown as { starts_at: string; services: { name: string } } | null;
+            const directService = booking.services as unknown as { name: string } | null;
+            const serviceName = slotJoin?.services.name ?? directService?.name ?? "Session";
+            const startsAt = slotJoin ? slotJoin.starts_at : booking.requested_starts_at;
+
             return (
               <div key={booking.id} className="rounded-lg border border-hairline p-4">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-ink">{slot.services.name}</span>
+                  <span className="font-medium text-ink">{serviceName}</span>
                   <span
                     className={`text-xs font-medium px-2 py-1 rounded-md ${
                       booking.status === "confirmed"
@@ -46,15 +47,16 @@ export default async function MyBookingsPage() {
                         : "bg-surface text-stone"
                     }`}
                   >
-                    {booking.status}
+                    {booking.status === "pending_confirmation" ? "awaiting photographer" : booking.status}
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-slate">
-                  {new Date(slot.starts_at).toLocaleString("en-IN", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                    timeZone: "Asia/Kolkata",
-                  })}{" "}
+                  {startsAt &&
+                    new Date(startsAt).toLocaleString("en-IN", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                      timeZone: "Asia/Kolkata",
+                    })}{" "}
                   &middot; ₹{booking.total_inr}
                 </p>
               </div>
