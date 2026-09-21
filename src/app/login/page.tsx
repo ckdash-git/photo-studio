@@ -18,7 +18,12 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        // Always the canonical domain, not window.location.origin - a
+        // visitor arriving via a different host (e.g. www vs non-www)
+        // would otherwise generate a redirect Supabase's allow-list
+        // rejects, silently breaking login. Falls back to the actual
+        // origin only if the env var is somehow unset.
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin}/auth/callback`,
       },
     });
 
