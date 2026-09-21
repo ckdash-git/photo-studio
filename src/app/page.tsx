@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getActiveServices } from "@/lib/services";
 import { getActivePhotographers } from "@/lib/photographers";
+import { getSiteImage } from "@/lib/site-images";
 
 const CARD_GRADIENTS = [
   "from-[var(--color-brand-coral)] to-[var(--color-brand-magenta)]",
@@ -10,9 +11,10 @@ const CARD_GRADIENTS = [
 ];
 
 export default async function HomePage() {
-  const [services, photographers] = await Promise.all([
+  const [services, photographers, heroImage] = await Promise.all([
     getActiveServices(),
     getActivePhotographers(3),
+    getSiteImage("hero"),
   ]);
 
   return (
@@ -34,6 +36,25 @@ export default async function HomePage() {
           Browse sessions
         </a>
       </section>
+
+      {heroImage && (
+        <section className="mx-auto max-w-5xl px-6 pb-16">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={heroImage.public_url}
+            alt=""
+            className="w-full aspect-[16/7] object-cover rounded-lg"
+          />
+          {heroImage.credit_name && (
+            <p className="mt-2 text-xs text-stone text-right">
+              Photo by {heroImage.credit_name} on{" "}
+              <a href={heroImage.credit_url ?? "https://pixabay.com"} className="underline">
+                Pixabay
+              </a>
+            </p>
+          )}
+        </section>
+      )}
 
       <section className="mx-auto max-w-4xl px-6 pb-16">
         <div className="grid sm:grid-cols-2 gap-4">

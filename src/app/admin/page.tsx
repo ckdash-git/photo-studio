@@ -56,6 +56,13 @@ export default async function AdminDashboard() {
           <p className="font-medium text-ink">Referral program</p>
           <p className="text-sm text-stone mt-0.5">Reward settings, signups, conversions</p>
         </Link>
+        <Link
+          href="/admin/images"
+          className="block rounded-lg border border-hairline p-4 hover:shadow-md transition-shadow"
+        >
+          <p className="font-medium text-ink">Site images</p>
+          <p className="text-sm text-stone mt-0.5">Search Pixabay and assign photos to the site</p>
+        </Link>
       </div>
     </main>
   );
