@@ -79,11 +79,26 @@ export function ProfileForm({
     }
 
     // Simple full-replace for portfolio: delete existing, insert current list.
-    await supabase.from("portfolio_items").delete().eq("photographer_id", photographer.id);
     const urls = portfolioUrls
       .split("\n")
       .map((u) => u.trim())
       .filter(Boolean);
+
+    const insecureUrls = urls.filter((u) => u.startsWith("http://"));
+    if (insecureUrls.length > 0) {
+      setError(
+        `These links use http:// instead of https:// and will show a "not secure" warning: ${insecureUrls.join(", ")}. Please use the https:// version.`,
+      );
+      setSubmitting(false);
+      return;
+    }
+    if (urls.some((u) => !u.startsWith("https://"))) {
+      setError("Portfolio links must start with https://");
+      setSubmitting(false);
+      return;
+    }
+
+    await supabase.from("portfolio_items").delete().eq("photographer_id", photographer.id);
     if (urls.length > 0) {
       await supabase.from("portfolio_items").insert(
         urls.map((url, i) => ({

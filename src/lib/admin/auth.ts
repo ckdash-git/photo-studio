@@ -12,7 +12,8 @@ export async function requireAdmin() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user || !process.env.ADMIN_EMAIL || user.email !== process.env.ADMIN_EMAIL) {
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  if (!user?.email || !adminEmail || user.email.toLowerCase() !== adminEmail) {
     redirect("/");
   }
 
@@ -24,5 +25,7 @@ export async function isAdmin() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  return !!user && !!process.env.ADMIN_EMAIL && user.email === process.env.ADMIN_EMAIL;
+
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  return !!user?.email && !!adminEmail && user.email.toLowerCase() === adminEmail;
 }
