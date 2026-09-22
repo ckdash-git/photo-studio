@@ -3,18 +3,16 @@ import { NextResponse } from "next/server";
 // Android fetches this from https://quickpic.click/.well-known/assetlinks.json
 // to verify this domain is allowed to open in the app via App Links.
 //
-// TODO before this works: replace the package name once it's real (not
-// the placeholder com.example.quick_pic - see android/app/build.gradle.kts),
-// and fill in the real SHA256 certificate fingerprint(s). Get this by
-// running, from the android/ folder:
-//   ./gradlew signingReport
-// which prints a SHA256 fingerprint for each variant (debug and release
-// have DIFFERENT fingerprints - the release one is what matters for the
-// actual published app, but add both if you want App Links to also work
-// on a locally-built debug APK during testing).
+// This is the debug keystore's fingerprint. It currently covers both
+// debug AND release builds of this app, since build.gradle.kts signs
+// release with the debug keystore too ("signing with debug keys for now"
+// - no real release signing config exists yet). Once real release
+// signing is set up before an actual Play Store submission, re-run
+// `./gradlew signingReport` from android/ and add that distinct release
+// fingerprint to this array alongside this one (both can coexist here).
 const ANDROID_PACKAGE_NAME = "com.optionallabs.quickpic";
 const ANDROID_SHA256_FINGERPRINTS = [
-  "TODO_PASTE_RELEASE_SHA256_FINGERPRINT_HERE",
+  "23:42:3B:7A:D7:E8:C4:84:06:90:1D:4B:8A:72:4B:F6:DA:04:21:30:9A:CC:F5:80:4D:5E:6D:01:E4:05:AF:D7",
 ];
 
 export async function GET() {

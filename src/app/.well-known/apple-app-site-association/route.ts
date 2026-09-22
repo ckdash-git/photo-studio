@@ -12,7 +12,7 @@ import { NextResponse } from "next/server";
 // the app's real PRODUCT_BUNDLE_IDENTIFIER ends up being (currently still
 // the placeholder com.example.quickPic - needs to change to something
 // real first, see ios/Runner.xcodeproj/project.pbxproj).
-const APPLE_TEAM_ID = "TEAMID"; // TODO: fill in
+const APPLE_TEAM_ID = "98UZF3WN7H";
 const APPLE_BUNDLE_ID = "com.OptionalLabs.QuickPic";
 
 export async function GET() {
