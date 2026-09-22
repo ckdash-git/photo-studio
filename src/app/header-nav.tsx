@@ -52,7 +52,7 @@ export function HeaderNav({ isLoggedIn }: { isLoggedIn: boolean }) {
       </button>
 
       {open && (
-        <div className="absolute top-16 left-0 right-0 md:hidden border-b border-hairline bg-canvas px-6 py-4 flex flex-col gap-4 shadow-md">
+        <div className="absolute top-16 left-0 right-0 z-50 md:hidden border-b border-hairline bg-canvas px-6 py-4 flex flex-col gap-4 shadow-md">
           {links.map((l) => (
             <Link
               key={l.href}
