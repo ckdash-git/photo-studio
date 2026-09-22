@@ -113,7 +113,7 @@ export default function LoginPage() {
           We sent a link to {email}. On a computer, clicking it is easiest.
         </p>
         <p className="mt-4 text-sm text-stone">
-          On this app, it&apos;s more reliable to type the 6-digit code from
+          On this app, it&apos;s more reliable to type the code from
           that same email instead - the link can open in a different app
           than this one.
         </p>
@@ -123,7 +123,7 @@ export default function LoginPage() {
             required
             inputMode="numeric"
             autoComplete="one-time-code"
-            placeholder="6-digit code"
+            placeholder="Login code"
             value={code}
             onChange={(e) => setCode(e.target.value)}
             className="w-full rounded-md border border-hairline px-4 py-2.5 text-sm text-center tracking-[0.3em] font-mono"
