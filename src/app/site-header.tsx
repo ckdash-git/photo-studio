@@ -9,7 +9,7 @@ export async function SiteHeader() {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="relative border-b border-hairline">
+    <header className="relative z-50 border-b border-hairline bg-canvas">
       <div className="mx-auto max-w-5xl px-6 h-16 flex items-center justify-between">
         <Link href="/" className="font-semibold text-ink">
           QuickPic

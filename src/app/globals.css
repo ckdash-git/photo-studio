@@ -76,10 +76,14 @@ body {
 }
 
 /*
-  Makes the site feel like a native app shell rather than a webpage,
-  particularly inside the Flutter WebView and Instagram's in-app browser:
-  no long-press text-selection callout, no gray tap-flash on buttons/links,
-  no rubber-band overscroll bounce revealing white space past the content.
+  Small, desktop-harmless polish: no rubber-band overscroll bounce
+  revealing white space past the content, no gray tap-flash on
+  buttons/links (replaced by real hover/active states - see below).
+  Text selection and pinch-zoom are NOT touched here - those are normal,
+  expected browser behavior for the website. The app-only "feels native"
+  restrictions (no selection, no zoom, hidden header/footer) are injected
+  by the native app itself via JS, not baked into the site's own CSS -
+  see QuickPick-Mobile's WebView JS injection.
 */
 html, body {
   overscroll-behavior-y: contain;
@@ -89,16 +93,29 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
+/*
+  Modern interaction feel, applied globally rather than per-component:
+  smooth transitions on anything interactive, a visible hover state on
+  primary buttons (previously identical hovered or not), a subtle lift on
+  clickable cards, and tactile press feedback. Deliberately restrained -
+  matches DESIGN.md's minimal aesthetic rather than adding heavy motion.
+*/
+a, button, [role="button"] {
+  transition: background-color 150ms ease, color 150ms ease,
+    border-color 150ms ease, box-shadow 200ms ease, transform 150ms ease,
+    opacity 150ms ease;
 }
 
-/* Text people actually need to select/copy - form fields and their labels. */
-input,
-textarea,
-[contenteditable="true"] {
-  -webkit-user-select: text;
-  user-select: text;
+button:active, a:active, [role="button"]:active {
+  transform: scale(0.98);
+}
+
+.bg-primary:hover {
+  opacity: 0.88;
+}
+
+/* Only actual link-cards get the lift (not static bordered info boxes,
+   which aren't clickable and shouldn't imply that they are). */
+a.border-hairline:hover {
+  transform: translateY(-2px);
 }

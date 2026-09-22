@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getActiveServices } from "@/lib/services";
 import { getActivePhotographers } from "@/lib/photographers";
 import { getSiteImage } from "@/lib/site-images";
+import { PageGradientBg } from "./page-gradient-bg";
 
 const CARD_GRADIENTS = [
   "from-[var(--color-brand-coral)] to-[var(--color-brand-magenta)]",
@@ -19,14 +20,7 @@ export default async function HomePage() {
 
   return (
     <main className="flex-1 relative overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[600px] opacity-[0.15] blur-3xl"
-        style={{
-          background:
-            "radial-gradient(circle at 30% 30%, var(--color-brand-coral), transparent 60%), radial-gradient(circle at 70% 60%, var(--color-brand-purple), transparent 60%)",
-        }}
-      />
+      <PageGradientBg />
       <section className="mx-auto max-w-4xl px-6 pt-24 pb-16 text-center relative">
         <h1 className="text-5xl sm:text-[80px] font-semibold leading-[1.1] tracking-[-2px] text-ink">
           Your next shoot,

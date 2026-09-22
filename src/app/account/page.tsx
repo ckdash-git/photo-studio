@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "@/app/sign-out-button";
 import { isAdmin } from "@/lib/admin/auth";
+import { PageGradientBg } from "../page-gradient-bg";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return <p className="text-xs font-medium text-stone uppercase tracking-wide mb-2">{children}</p>;
@@ -33,7 +34,8 @@ export default async function AccountPage() {
   ]);
 
   return (
-    <main className="flex-1 mx-auto max-w-md w-full px-6 py-16">
+    <main className="flex-1 relative overflow-hidden mx-auto max-w-md w-full px-6 py-16">
+      <PageGradientBg />
       <h1 className="text-2xl font-semibold text-ink">Account</h1>
       <p className="mt-2 text-sm text-stone">{user.email}</p>
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getActivePhotographers } from "@/lib/photographers";
+import { PageGradientBg } from "../page-gradient-bg";
 
 const CARD_GRADIENTS = [
   "from-[var(--color-brand-coral)] to-[var(--color-brand-magenta)]",
@@ -12,7 +13,8 @@ export default async function PhotographersDirectoryPage() {
   const photographers = await getActivePhotographers();
 
   return (
-    <main className="flex-1 mx-auto max-w-5xl w-full px-6 py-16">
+    <main className="flex-1 relative overflow-hidden mx-auto max-w-5xl w-full px-6 py-16">
+      <PageGradientBg variant="cool" />
       <h1 className="text-3xl font-semibold text-ink">Find a photographer</h1>
       <p className="mt-2 text-slate">Browse portfolios and post what you need.</p>
 

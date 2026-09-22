@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getMyPhotographerAndAccess } from "@/lib/subscriptions";
 import { createClient } from "@/lib/supabase/server";
+import { PageGradientBg } from "../page-gradient-bg";
 
 function timeAgo(dateString: string) {
   const diffMs = Date.now() - new Date(dateString).getTime();
@@ -26,7 +27,8 @@ export default async function LeadsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <main className="flex-1 mx-auto max-w-3xl w-full px-6 py-16">
+    <main className="flex-1 relative overflow-hidden mx-auto max-w-3xl w-full px-6 py-16">
+      <PageGradientBg variant="cool" />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-ink">Open leads</h1>
         <span className="text-sm text-stone">{requirements?.length ?? 0} open</span>
