@@ -30,6 +30,26 @@ export default function LoginPage() {
     }
   }, []);
 
+  // If the user has this login tab open and completes login in a
+  // different tab in the same browser (e.g. clicking the magic link,
+  // which opens in a new tab) - the two tabs share the same cookies, so
+  // that login is already real, but this tab's own state doesn't know
+  // it yet. Supabase's client syncs session state across same-origin
+  // tabs via localStorage, so this fires without any polling.
+  useEffect(() => {
+    const supabase = createClient();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        sessionStorage.removeItem(STORAGE_KEY);
+        router.push("/my-bookings");
+        router.refresh();
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [router]);
+
   async function handleSendLink(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
