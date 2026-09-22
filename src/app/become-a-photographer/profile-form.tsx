@@ -25,6 +25,7 @@ export function ProfileForm({
   existingPortfolio: PortfolioItem[];
 }) {
   const router = useRouter();
+  const isFirstTime = !existingPhotographer;
   const [displayName, setDisplayName] = useState(existingPhotographer?.display_name ?? "");
   const [city, setCity] = useState(existingPhotographer?.city ?? "");
   const [categories, setCategories] = useState(
@@ -110,7 +111,7 @@ export function ProfileForm({
     }
 
     setSubmitting(false);
-    router.push(`/photographers/${photographer.id}`);
+    router.push(isFirstTime ? "/photographer-onboarding" : `/photographers/${photographer.id}`);
   }
 
   return (
