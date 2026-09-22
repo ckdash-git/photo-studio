@@ -3,6 +3,7 @@ import { DM_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
+import { SessionBridge } from "./session-bridge";
 
 // Font per DESIGN.md (MiniMax reference): DM Sans across all surfaces.
 const dmSans = DM_Sans({
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans">
+        <SessionBridge />
         <SiteHeader />
         {children}
         <SiteFooter />
