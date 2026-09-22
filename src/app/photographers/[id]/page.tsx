@@ -1,6 +1,26 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPhotographerProfile } from "@/lib/photographers";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const result = await getPhotographerProfile(id);
+  if (!result) return {};
+
+  const { photographer } = result;
+  const categoryText = photographer.categories.length > 0 ? ` - ${photographer.categories.join(", ")}` : "";
+  const title = `${photographer.display_name} - Photographer in ${photographer.city}`;
+  const description =
+    photographer.bio ||
+    `${photographer.display_name} is a photographer based in ${photographer.city}${categoryText}. Book through QuickPic - contact details stay private until you book.`;
+
+  return { title, description };
+}
 
 export default async function PhotographerProfilePage({
   params,
@@ -12,8 +32,28 @@ export default async function PhotographerProfilePage({
   if (!result) notFound();
   const { photographer, portfolio } = result;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://quickpic.click";
+  const serviceJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: photographer.categories.join(", ") || "Photography",
+    provider: {
+      "@type": "Person",
+      name: photographer.display_name,
+    },
+    areaServed: {
+      "@type": "City",
+      name: photographer.city,
+    },
+    url: `${siteUrl}/photographers/${photographer.id}`,
+  };
+
   return (
     <main className="flex-1 mx-auto max-w-3xl w-full px-6 py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
       <div className="flex items-start gap-4">
         <div className="h-16 w-16 shrink-0 rounded-full bg-gradient-to-br from-[var(--color-brand-coral)] to-[var(--color-brand-magenta)] flex items-center justify-center text-on-primary text-2xl font-semibold">
           {photographer.display_name.charAt(0).toUpperCase()}

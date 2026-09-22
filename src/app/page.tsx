@@ -18,8 +18,21 @@ export default async function HomePage() {
     getSiteImage("hero"),
   ]);
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://quickpic.click";
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "QuickPic",
+    url: siteUrl,
+    description: "Book a photo shoot session, or find and hire an independent photographer.",
+  };
+
   return (
     <main className="flex-1 relative overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
       <PageGradientBg />
       <section className="mx-auto max-w-4xl px-6 pt-24 pb-16 text-center relative">
         <h1 className="text-5xl sm:text-[80px] font-semibold leading-[1.1] tracking-[-2px] text-ink">

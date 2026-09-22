@@ -1,7 +1,29 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceDetail } from "@/lib/services";
 import { CheckoutForm } from "./checkout-form";
 import { FreeformCheckoutForm } from "./freeform-checkout-form";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ serviceId: string }>;
+}): Promise<Metadata> {
+  const { serviceId } = await params;
+  const result = await getServiceDetail(serviceId);
+  if (!result) return {};
+
+  const { service } = result;
+  const photographer = service.photographers as unknown as { display_name: string } | null;
+  const title = photographer ? `Book ${service.name} with ${photographer.display_name}` : `Book ${service.name}`;
+
+  return {
+    title,
+    description:
+      service.description ||
+      `Book a ${service.name} session - ${service.duration_minutes} minutes, ₹${service.price_inr}. Pay securely, get instant confirmation.`,
+  };
+}
 
 export default async function BookServicePage({
   params,

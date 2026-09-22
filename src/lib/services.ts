@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
 export async function getActiveServices() {
@@ -11,7 +12,7 @@ export async function getActiveServices() {
   return data ?? [];
 }
 
-export async function getServiceDetail(serviceId: string) {
+export const getServiceDetail = cache(async (serviceId: string) => {
   const supabase = await createClient();
   const { data: service } = await supabase
     .from("services")
@@ -38,4 +39,4 @@ export async function getServiceDetail(serviceId: string) {
     .order("starts_at", { ascending: true });
 
   return { service, slots: slots ?? [] };
-}
+});

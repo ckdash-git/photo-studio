@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
 export async function getActivePhotographers(limit?: number) {
@@ -36,7 +37,7 @@ export async function getActivePhotographers(limit?: number) {
   }));
 }
 
-export async function getPhotographerProfile(id: string) {
+export const getPhotographerProfile = cache(async (id: string) => {
   const supabase = await createClient();
   const { data: photographer } = await supabase
     .from("photographers")
@@ -54,4 +55,4 @@ export async function getPhotographerProfile(id: string) {
     .order("sort_order", { ascending: true });
 
   return { photographer, portfolio: portfolio ?? [] };
-}
+});

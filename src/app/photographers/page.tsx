@@ -1,6 +1,13 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getActivePhotographers } from "@/lib/photographers";
 import { PageGradientBg } from "../page-gradient-bg";
+
+export const metadata: Metadata = {
+  title: "Find a Photographer",
+  description:
+    "Browse independent photographer portfolios and post what you need. Contact details stay private until you book - photographers respond with quotes through the platform.",
+};
 
 const CARD_GRADIENTS = [
   "from-[var(--color-brand-coral)] to-[var(--color-brand-magenta)]",
