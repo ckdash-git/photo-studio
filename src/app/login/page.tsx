@@ -1,14 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { completeLoginReferralCapture } from "@/lib/referrals/actions";
 
 const STORAGE_KEY = "quickpic-pending-login-email";
 
-export default function LoginPage() {
+/**
+ * Only allow redirecting to a same-site relative path, e.g. "/photographers".
+ * Rejects anything else (a full URL, or "//evil.com" which browsers treat as
+ * protocol-relative to a different host) - this value comes from a URL query
+ * param set by the app's own JS injection, but query params are always
+ * user-controllable, so it needs validating regardless of who normally sets it.
+ */
+function getSafeRedirect(raw: string | null): string {
+  if (raw && raw.startsWith("/") && !raw.startsWith("//")) return raw;
+  return "/my-bookings";
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = getSafeRedirect(searchParams.get("redirect"));
+
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [sent, setSent] = useState(false);
@@ -30,12 +45,17 @@ export default function LoginPage() {
     }
   }, []);
 
-  // If the user has this login tab open and completes login in a
-  // different tab in the same browser (e.g. clicking the magic link,
-  // which opens in a new tab) - the two tabs share the same cookies, so
-  // that login is already real, but this tab's own state doesn't know
-  // it yet. Supabase's client syncs session state across same-origin
-  // tabs via localStorage, so this fires without any polling.
+  // If the user has this login tab/screen open and completes login
+  // elsewhere with the same cookie/localStorage store - a different
+  // browser tab (clicking the magic link opens a new tab), or a
+  // different app tab (the app's 4 WebViews share the same underlying
+  // store on both iOS and Android) - that login is already real, but
+  // this screen's own state doesn't know it yet. Supabase's client syncs
+  // session state across same-origin contexts via localStorage, so this
+  // fires without any polling, and each screen redirects back to
+  // wherever IT was trying to go (redirectTo), not a single hardcoded
+  // page - otherwise logging in on one app tab would dump every other
+  // tab onto the same page instead of restoring each one.
   useEffect(() => {
     const supabase = createClient();
     const {
@@ -43,12 +63,12 @@ export default function LoginPage() {
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session) {
         sessionStorage.removeItem(STORAGE_KEY);
-        router.push("/my-bookings");
+        router.push(redirectTo);
         router.refresh();
       }
     });
     return () => subscription.unsubscribe();
-  }, [router]);
+  }, [router, redirectTo]);
 
   async function handleSendLink(e: React.FormEvent) {
     e.preventDefault();
@@ -64,7 +84,7 @@ export default function LoginPage() {
         // would otherwise generate a redirect Supabase's allow-list
         // rejects, silently breaking login. Falls back to the actual
         // origin only if the env var is somehow unset.
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin}/auth/callback`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectTo)}`,
       },
     });
 
@@ -101,7 +121,7 @@ export default function LoginPage() {
     await completeLoginReferralCapture();
 
     sessionStorage.removeItem(STORAGE_KEY);
-    router.push("/my-bookings");
+    router.push(redirectTo);
     router.refresh();
   }
 
@@ -186,5 +206,13 @@ export default function LoginPage() {
         </button>
       </form>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }
