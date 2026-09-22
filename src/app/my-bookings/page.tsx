@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "@/app/sign-out-button";
+import { PageGradientBg } from "../page-gradient-bg";
 
 export default async function MyBookingsPage() {
   const supabase = await createClient();
@@ -17,7 +18,8 @@ export default async function MyBookingsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <main className="flex-1 mx-auto max-w-2xl w-full px-6 py-16">
+    <main className="flex-1 relative overflow-hidden mx-auto max-w-2xl w-full px-6 py-16">
+      <PageGradientBg />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-ink">My bookings</h1>
         <SignOutButton />

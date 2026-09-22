@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileForm } from "./profile-form";
+import { PageGradientBg } from "@/app/page-gradient-bg";
 
 export default async function BecomePhotographerPage() {
   const supabase = await createClient();
@@ -27,7 +28,8 @@ export default async function BecomePhotographerPage() {
   }
 
   return (
-    <main className="flex-1 mx-auto max-w-xl w-full px-6 py-16">
+    <main className="flex-1 relative overflow-hidden mx-auto max-w-xl w-full px-6 py-16">
+      <PageGradientBg />
       <h1 className="text-2xl font-semibold text-ink">
         {photographer ? "Edit your profile" : "List yourself as a photographer"}
       </h1>
