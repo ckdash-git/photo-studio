@@ -1,27 +1,33 @@
-// Shared decorative background - same subtle blurred gradient blob used on
-// the homepage hero, reused across other pages so they don't feel starkly
+// Shared decorative background - same subtle gradient wash used on the
+// homepage hero, reused across other pages so they don't feel starkly
 // white/black in contrast.
 //
-// Deliberately has NO z-index at all (not even z-0). A positioned element
-// with an explicit z-index - even 0 - establishes its own stacking context,
-// which can then compete unpredictably with other explicitly-stacked
-// elements elsewhere on the page (like the header's mobile dropdown at
-// z-50) depending on exactly how intermediate wrapper elements are
-// positioned. An element with NO z-index (auto) never does this - it just
-// paints in normal document order, safely behind anything that comes
-// later or has an explicit z-index. This was the actual cause of the
-// mobile-menu bleed-through bug, not something a "higher" z-index would
-// have fixed.
+// This element deliberately uses NONE of the CSS properties that
+// independently create a new stacking context: no explicit z-index (even
+// 0 counts), no filter (blur), no opacity < 1, no transform. Any one of
+// these can promote the element to its own GPU compositing layer, and
+// mobile Safari has real, documented quirks rendering composited layers
+// in unexpected stacking order relative to other positioned elements
+// (the header's mobile dropdown, specifically) - three separate rounds
+// of this bug turned out to be three separate triggers from this same
+// list, not one bug. Only `position: absolute` remains here, which does
+// NOT trigger a stacking context on its own per spec.
+//
+// The soft, low-opacity look is achieved entirely through color-mix()
+// in the gradient stops instead of the `opacity` property, and centering
+// uses a fixed negative margin instead of `transform: translateX(-50%)`.
 export function PageGradientBg({ variant = "default" }: { variant?: "default" | "cool" }) {
-  const gradient =
+  const [colorA, colorB] =
     variant === "cool"
-      ? "radial-gradient(circle at 30% 30%, var(--color-brand-blue), transparent 60%), radial-gradient(circle at 70% 60%, var(--color-brand-cyan), transparent 60%)"
-      : "radial-gradient(circle at 30% 30%, var(--color-brand-coral), transparent 60%), radial-gradient(circle at 70% 60%, var(--color-brand-purple), transparent 60%)";
+      ? ["var(--color-brand-blue)", "var(--color-brand-cyan)"]
+      : ["var(--color-brand-coral)", "var(--color-brand-purple)"];
+
+  const gradient = `radial-gradient(circle at 30% 30%, color-mix(in srgb, ${colorA} 12%, transparent), transparent 55%), radial-gradient(circle at 70% 60%, color-mix(in srgb, ${colorB} 12%, transparent), transparent 55%)`;
 
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[600px] opacity-[0.12] blur-3xl"
+      className="pointer-events-none absolute -top-40 left-1/2 ml-[-450px] w-[900px] h-[600px]"
       style={{ background: gradient }}
     />
   );
