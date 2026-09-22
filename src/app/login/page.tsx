@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { completeLoginReferralCapture } from "@/lib/referrals/actions";
+
+const STORAGE_KEY = "quickpic-pending-login-email";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,6 +15,20 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [verifying, setVerifying] = useState(false);
+
+  // Restores the "check your email" screen if this tab was reloaded, or
+  // reopened, while the code was being read on another device - the
+  // whole point of the code (rather than the link) is that it can be
+  // typed in from anywhere, so losing this screen on a reload would
+  // defeat that.
+  useEffect(() => {
+    const pendingEmail = sessionStorage.getItem(STORAGE_KEY);
+    if (pendingEmail) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sessionStorage doesn't exist during SSR, so reading it via a useState initializer would return a different value on the client during hydration than the server rendered, causing a mismatch. This must run post-mount.
+      setEmail(pendingEmail);
+      setSent(true);
+    }
+  }, []);
 
   async function handleSendLink(e: React.FormEvent) {
     e.preventDefault();
@@ -37,6 +53,7 @@ export default function LoginPage() {
       setError(error.message);
       return;
     }
+    sessionStorage.setItem(STORAGE_KEY, email);
     setSent(true);
   }
 
@@ -63,6 +80,7 @@ export default function LoginPage() {
     // happens entirely client-side.
     await completeLoginReferralCapture();
 
+    sessionStorage.removeItem(STORAGE_KEY);
     router.push("/my-bookings");
     router.refresh();
   }
@@ -103,6 +121,18 @@ export default function LoginPage() {
             {verifying ? "Verifying..." : "Verify code"}
           </button>
         </form>
+        <button
+          onClick={() => {
+            sessionStorage.removeItem(STORAGE_KEY);
+            setSent(false);
+            setEmail("");
+            setCode("");
+            setError(null);
+          }}
+          className="mt-4 text-xs text-stone underline"
+        >
+          Use a different email
+        </button>
       </main>
     );
   }
