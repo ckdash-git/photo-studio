@@ -12,7 +12,7 @@ import { NextResponse } from "next/server";
 // have DIFFERENT fingerprints - the release one is what matters for the
 // actual published app, but add both if you want App Links to also work
 // on a locally-built debug APK during testing).
-const ANDROID_PACKAGE_NAME = "com.example.quick_pic"; // TODO: update once this is a real package name
+const ANDROID_PACKAGE_NAME = "com.optionallabs.quickpic";
 const ANDROID_SHA256_FINGERPRINTS = [
   "TODO_PASTE_RELEASE_SHA256_FINGERPRINT_HERE",
 ];
